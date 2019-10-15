@@ -1,0 +1,18 @@
+version: "3"
+networks:
+  internal:
+services:
+  web:
+    image: app
+    container_name: web
+    networks:
+      - internal
+  varnish: 
+    image: varnish:latest
+    container_name: varnish
+    volumes:
+      - ./config/default.vcl:/etc/varnish/default.vcl:ro
+    ports:
+      - 80:80
+    networks:
+      - internal
