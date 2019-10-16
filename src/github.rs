@@ -6,22 +6,24 @@ use image::{self, ImageFormat};
 use scraper::{Html, Selector};
 use url::Url;
 
-pub struct Client {
-    client: hyper::Client<HttpsConnector<HttpConnector>>,
-}
-
-impl Default for Client {
-    fn default() -> Self {
-        let connector = HttpsConnector::new().unwrap();
-        let client = hyper::Client::builder().build::<_, Body>(connector);
-
-        Client { client }
-    }
-}
-
 const USER_AGENT: &str = "yells.at (@davidcornu)";
 
-impl Client {
+pub type HttpClient = hyper::Client<HttpsConnector<HttpConnector>>;
+
+pub fn build_http_client() -> HttpClient {
+    let connector = HttpsConnector::new().unwrap();
+    hyper::Client::builder().build::<_, Body>(connector)
+}
+
+pub struct Client<'a> {
+    http_client: &'a HttpClient,
+}
+
+impl<'a> Client<'a> {
+    pub fn new(http_client: &'a HttpClient) -> Self {
+        Client { http_client }
+    }
+
     fn public_profile_url(username: &str) -> Url {
         let mut profile_url: Url = "https://github.com".parse().unwrap();
         profile_url.path_segments_mut().unwrap().extend(&[username]);
@@ -36,7 +38,7 @@ impl Client {
             .header("User-Agent", USER_AGENT)
             .body(Body::empty())?;
 
-        let res = self.client.request(req).await?;
+        let res = self.http_client.request(req).await?;
 
         if !res.status().is_success() {
             return Ok(None);
@@ -79,7 +81,7 @@ impl Client {
             .body(Body::empty())
             .unwrap();
 
-        let res = self.client.request(req).await?;
+        let res = self.http_client.request(req).await?;
 
         if !res.status().is_success() {
             return Ok(None);

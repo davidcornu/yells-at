@@ -4,10 +4,9 @@ mod github;
 use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Method, Request, Response, Server};
 use image::{imageops, ImageFormat};
+use lazy_static::lazy_static;
 use std::convert::Infallible;
 use std::error::Error;
-
-const TEMPLATE_BYTES: &[u8] = include_bytes!("../assets/yells_at.png");
 
 pub(crate) type BoxedError = Box<dyn Error + Send + Sync>;
 
@@ -69,8 +68,14 @@ fn not_found() -> Result<Response<Body>, BoxedError> {
         .unwrap())
 }
 
+lazy_static! {
+    static ref HTTP_CLIENT: github::HttpClient = { github::build_http_client() };
+}
+
+const TEMPLATE_BYTES: &[u8] = include_bytes!("../assets/yells_at.png");
+
 async fn generate(username: &str) -> Result<Option<image::DynamicImage>, BoxedError> {
-    let client = github::Client::default();
+    let client = github::Client::new(&HTTP_CLIENT);
 
     let avatar = match client.fetch_avatar(username).await? {
         Some(img) => img,
