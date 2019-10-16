@@ -4,6 +4,7 @@ vcl 4.0;
 
 sub vcl_recv {
   unset req.http.x-cache;
+  unset req.http.Cookie;
 }
 
 sub vcl_hit {
