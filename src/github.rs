@@ -1,5 +1,4 @@
 use crate::BoxedError;
-use futures::TryStreamExt;
 use hyper::{self, client::HttpConnector, Body, Request};
 use hyper_tls::HttpsConnector;
 use image::{self, ImageFormat};
@@ -11,7 +10,7 @@ const USER_AGENT: &str = "yells.at (@davidcornu)";
 pub type HttpClient = hyper::Client<HttpsConnector<HttpConnector>>;
 
 pub fn build_http_client() -> HttpClient {
-    let connector = HttpsConnector::new().unwrap();
+    let connector = HttpsConnector::new();
     hyper::Client::builder().build::<_, Body>(connector)
 }
 
@@ -44,7 +43,7 @@ impl<'a> Client<'a> {
             return Ok(None);
         }
 
-        let body = res.into_body().try_concat().await?;
+        let body = hyper::body::to_bytes(res.into_body()).await?;
         let document = Html::parse_document(&String::from_utf8_lossy(&body));
         let selector = Selector::parse("meta[property='og:image']").unwrap();
 
@@ -92,7 +91,7 @@ impl<'a> Client<'a> {
             None => return Ok(None),
         };
 
-        let bytes = res.into_body().try_concat().await?;
+        let bytes = hyper::body::to_bytes(res.into_body()).await?;
         let image = image::load_from_memory_with_format(&bytes, format)?;
 
         Ok(Some(image))
