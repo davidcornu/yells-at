@@ -31,15 +31,28 @@ async fn endpoint(req: Request<Body>) -> Result<Response<Body>, BoxedError> {
     let path_parts = req
         .uri()
         .path()
-        .split("/")
+        .split('/')
         .filter(|part| !part.is_empty())
         .collect::<Vec<_>>();
 
-    match (req.method(), path_parts.as_slice()) {
+    let result = match (req.method(), path_parts.as_slice()) {
         (&Method::GET, ["favicon.ico"]) => not_found(),
         (&Method::GET, [username]) => serve_image(username).await,
         _ => not_found(),
+    };
+
+    if let Err(error) = result {
+        println!(
+            "{method} {uri} - {error:?}",
+            method = req.method(),
+            uri = req.uri(),
+            error = error
+        );
+
+        return internal_error();
     }
+
+    result
 }
 
 async fn serve_image(username: &str) -> Result<Response<Body>, BoxedError> {
@@ -65,6 +78,14 @@ fn not_found() -> Result<Response<Body>, BoxedError> {
         .status(404)
         .header("Content-Type", "text/plain")
         .body(Body::from("NOT FOUND"))
+        .unwrap())
+}
+
+fn internal_error() -> Result<Response<Body>, BoxedError> {
+    Ok(Response::builder()
+        .status(400)
+        .header("Content-Type", "text/plain")
+        .body(Body::from("INTERNAL SERVER ERROR"))
         .unwrap())
 }
 
