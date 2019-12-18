@@ -4,17 +4,15 @@ version = "0.1.0"
 authors = ["David Cornu <me@davidcornu.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-url = "2.1.0"
-tokio = { version = "0.2.0", features = ["macros"] }
-hyper = { version = "0.13.0", features = ["stream"] }
-hyper-tls = "0.4.0"
-scraper = "0.11.0"
-lazy_static = "1.4.0"
+url = "^2.1"
+tokio = { version = "^0.2", features = ["macros"] }
+hyper = { version = "^0.13", features = ["stream"] }
+hyper-tls = "^0.4"
+scraper = "^0.11"
+lazy_static = "^1.4"
 
 [dependencies.image]
-version = "0.22.3"
+version = "^0.22"
 default-features = false
 features = ["jpeg", "png_codec"]
