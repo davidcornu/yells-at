@@ -11,7 +11,7 @@ RUN apt-get -y install curl build-essential pkg-config
 COPY ./rust-toolchain /app
 
 # Install Rust environment
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain $(cat /app/rust-toolchain)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain $(cat /app/rust-toolchain)
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Buikd
