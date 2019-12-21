@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 url = "^2.1"
-tokio = { version = "^0.2", features = ["macros"] }
+tokio = { version = "^0.2", features = ["macros", "blocking", "rt-threaded"] }
 hyper = { version = "^0.13", features = ["stream"] }
 hyper-tls = "^0.4"
 scraper = "^0.11"
