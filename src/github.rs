@@ -92,7 +92,9 @@ impl<'a> Client<'a> {
         };
 
         let bytes = hyper::body::to_bytes(res.into_body()).await?;
-        let image = image::load_from_memory_with_format(&bytes, format)?;
+        let image = tokio::task::block_in_place(|| {
+            image::load_from_memory_with_format(&bytes, format)
+        })?;
 
         Ok(Some(image))
     }

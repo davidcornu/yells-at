@@ -105,11 +105,15 @@ async fn generate(username: &str) -> Result<Option<image::DynamicImage>, BoxedEr
         }
     };
 
-    let resized_avatar = avatar.thumbnail(60, 60);
+    let combined: Result<image::DynamicImage, BoxedError> = tokio::task::block_in_place(|| {
+        let resized_avatar = avatar.thumbnail(60, 60);
 
-    let mut yells = image::load_from_memory_with_format(&TEMPLATE_BYTES, ImageFormat::PNG)?;
+        let mut yells = image::load_from_memory_with_format(&TEMPLATE_BYTES, ImageFormat::PNG)?;
 
-    imageops::overlay(&mut yells, &resized_avatar, 0, 0);
+        imageops::overlay(&mut yells, &resized_avatar, 0, 0);
 
-    Ok(Some(yells))
+        Ok(yells)
+    });
+
+    Ok(Some(combined?))
 }
