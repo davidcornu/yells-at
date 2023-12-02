@@ -61,7 +61,7 @@ async fn serve_image(username: &str) -> Result<Response<Body>, BoxedError> {
     match yells {
         Some(img) => {
             let mut bytes: Vec<u8> = vec![];
-            img.write_to(&mut bytes, ImageFormat::PNG)?;
+            img.write_to(&mut bytes, ImageFormat::Png)?;
 
             Ok(Response::builder()
                 .header("Content-Type", "image/png")
@@ -108,7 +108,7 @@ async fn generate(username: &str) -> Result<Option<image::DynamicImage>, BoxedEr
     let combined: Result<image::DynamicImage, BoxedError> = tokio::task::block_in_place(|| {
         let resized_avatar = avatar.thumbnail(60, 60);
 
-        let mut yells = image::load_from_memory_with_format(&TEMPLATE_BYTES, ImageFormat::PNG)?;
+        let mut yells = image::load_from_memory_with_format(TEMPLATE_BYTES, ImageFormat::Png)?;
 
         imageops::overlay(&mut yells, &resized_avatar, 0, 0);
 

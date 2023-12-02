@@ -58,8 +58,8 @@ impl<'a> Client<'a> {
         res.headers()
             .get("content-type")
             .and_then(|header| match header.to_str() {
-                Ok("image/png") => Some(ImageFormat::PNG),
-                Ok("image/jpeg") => Some(ImageFormat::JPEG),
+                Ok("image/png") => Some(ImageFormat::Png),
+                Ok("image/jpeg") => Some(ImageFormat::Jpeg),
                 _ => None,
             })
     }
