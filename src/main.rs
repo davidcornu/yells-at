@@ -89,11 +89,12 @@ fn internal_error() -> Result<Response<Body>, BoxedError> {
         .unwrap())
 }
 
+const TEMPLATE_BYTES: &[u8] = include_bytes!("../assets/yells_at.png");
+
 lazy_static! {
     static ref HTTP_CLIENT: github::HttpClient = github::build_http_client();
+    static ref TEMPLATE: image::DynamicImage = image::load_from_memory_with_format(TEMPLATE_BYTES, ImageFormat::Png).unwrap();
 }
-
-const TEMPLATE_BYTES: &[u8] = include_bytes!("../assets/yells_at.png");
 
 async fn generate(username: &str) -> Result<Option<image::DynamicImage>, BoxedError> {
     let client = github::Client::new(&HTTP_CLIENT);
@@ -108,7 +109,7 @@ async fn generate(username: &str) -> Result<Option<image::DynamicImage>, BoxedEr
     let combined: Result<image::DynamicImage, BoxedError> = tokio::task::block_in_place(|| {
         let resized_avatar = avatar.thumbnail(60, 60);
 
-        let mut yells = image::load_from_memory_with_format(TEMPLATE_BYTES, ImageFormat::Png)?;
+        let mut yells = TEMPLATE.clone(); 
 
         imageops::overlay(&mut yells, &resized_avatar, 0, 0);
 
