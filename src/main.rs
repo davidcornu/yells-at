@@ -1,4 +1,3 @@
-#[warn(rust_2018_idioms)]
 mod github;
 
 use hyper::service::{make_service_fn, service_fn};
@@ -7,6 +6,7 @@ use image::{imageops, ImageFormat};
 use lazy_static::lazy_static;
 use std::convert::Infallible;
 use std::error::Error;
+use std::io::Cursor;
 
 pub(crate) type BoxedError = Box<dyn Error + Send + Sync>;
 
@@ -60,13 +60,13 @@ async fn serve_image(username: &str) -> Result<Response<Body>, BoxedError> {
 
     match yells {
         Some(img) => {
-            let mut bytes: Vec<u8> = vec![];
+            let mut bytes = Cursor::new(vec![]);
             img.write_to(&mut bytes, ImageFormat::Png)?;
 
             Ok(Response::builder()
                 .header("Content-Type", "image/png")
                 .header("Cache-Control", "public, max-age=31557600, immutable")
-                .body(Body::from(bytes))
+                .body(Body::from(bytes.into_inner()))
                 .unwrap())
         }
         None => not_found(),
