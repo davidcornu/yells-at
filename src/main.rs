@@ -90,7 +90,7 @@ fn internal_error() -> Result<Response<Body>, BoxedError> {
 }
 
 lazy_static! {
-    static ref HTTP_CLIENT: github::HttpClient = { github::build_http_client() };
+    static ref HTTP_CLIENT: github::HttpClient = github::build_http_client();
 }
 
 const TEMPLATE_BYTES: &[u8] = include_bytes!("../assets/yells_at.png");
