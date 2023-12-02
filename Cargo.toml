@@ -2,7 +2,7 @@
 name = "yells-at"
 version = "0.1.0"
 authors = ["David Cornu <me@davidcornu.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 url = "^2.1"
