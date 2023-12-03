@@ -1,6 +1,6 @@
 use crate::BoxedError;
 use hyper::{self, client::HttpConnector, Body, Request};
-use hyper_tls::HttpsConnector;
+use hyper_rustls::{HttpsConnector, HttpsConnectorBuilder};
 use image::{self, ImageFormat};
 use scraper::{Html, Selector};
 use url::Url;
@@ -10,7 +10,12 @@ const USER_AGENT: &str = "yells.at (@davidcornu)";
 pub type HttpClient = hyper::Client<HttpsConnector<HttpConnector>>;
 
 pub fn build_http_client() -> HttpClient {
-    let connector = HttpsConnector::new();
+    let connector = HttpsConnectorBuilder::new()
+        .with_native_roots()
+        .https_only()
+        .enable_http2()
+        .build();
+
     hyper::Client::builder().build::<_, Body>(connector)
 }
 
