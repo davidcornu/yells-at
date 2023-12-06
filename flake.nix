@@ -72,7 +72,7 @@
           '';
         };
 
-        packages.container = pkgs.dockerTools.buildLayeredImage {
+        packages.container = pkgs.dockerTools.streamLayeredImage {
           name = "yells-at";
           tag = "latest";
 
