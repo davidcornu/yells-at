@@ -67,8 +67,8 @@
         packages.procfile = pkgs.writeTextFile {
           name = "Procfile";
           text = ''
-            web: ${packages.default}/bin/yells-at
-            nginx: ${pkgs.nginx}/bin/nginx -c ${./config/nginx.conf}
+            web: yells-at
+            nginx: nginx -c ${./config/nginx.conf}
           '';
         };
 
@@ -76,9 +76,11 @@
           name = "yells-at";
           tag = "latest";
 
-          contents = [ 
-            pkgs.cacert 
-            pkgs.hivemind
+          contents = with pkgs; [ 
+            cacert 
+            hivemind
+            nginx
+            packages.default
           ];
 
           config.Cmd = [
