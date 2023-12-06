@@ -18,7 +18,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: DeterminateSystems/magic-nix-cache-action@main 
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: $(nix build .#container) | docker load
+      - run: |
+        nix build .#container
+        ./result | docker load
       - run: flyctl deploy --local-only --image "yells-at:latest"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
