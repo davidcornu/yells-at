@@ -81,6 +81,7 @@
             hivemind
             nginx
             packages.default
+            fakeNss
           ];
 
           config.Cmd = [
@@ -88,15 +89,10 @@
             "${packages.procfile}"
           ];
 
-          fakeRootCommands = ''
-            #!${pkgs.runtimeShell}
-            set -ex
-            ${pkgs.dockerTools.shadowSetup}
-            groupadd -r nginx
-            useradd -r -g  nginx nginx
-            mkdir -p /tmp/nginx_cache
+          extraCommands = ''
+            mkdir -p tmp/nginx_cache
+            mkdir -p var/log/nginx
           '';
-          enableFakechroot = true;
         };
 
         devShells.default = pkgs.mkShell {
