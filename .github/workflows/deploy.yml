@@ -19,8 +19,8 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main 
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: |
-        nix build .#container
-        ./result | docker load
+          nix build .#container
+          ./result | docker load
       - run: flyctl deploy --local-only --image "yells-at:latest"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
