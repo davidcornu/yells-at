@@ -67,8 +67,8 @@
         packages.procfile = pkgs.writeTextFile {
           name = "Procfile";
           text = ''
-            web: yells-at
-            nginx: nginx -c ${./config/nginx.conf}
+            web: /bin/yells-at
+            nginx: /bin/nginx -c ${./config/nginx.conf}
           '';
         };
 
