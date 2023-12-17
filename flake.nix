@@ -30,7 +30,7 @@
           ];
         };
 
-        rustToolchain = pkgs.rust-bin.beta.latest.default.override {
+        rustToolchain = pkgs.rust-bin.stable.latest.default.override {
           extensions = [ "rust-src" ];
         };
 
